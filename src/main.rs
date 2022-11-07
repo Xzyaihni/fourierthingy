@@ -110,9 +110,11 @@ fn buggify_image(input_path: &str, output_path: &str, config: &Config)
 
     let waves = ff_transform(&mut data_points);
     //randomly_shift_wave(&mut inner_waves, config);
+
+    let len = waves.len();
     let mut waves = waves.into_iter().enumerate().map(|(i, v)|
     {
-        let ratio = i as f64 / waves.len() as f64;
+        let ratio = i as f64 / (len-1) as f64;
         if ratio<config.strength
         {
             (0.0, 0.0)
