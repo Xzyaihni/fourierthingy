@@ -168,7 +168,7 @@ impl Config
             {
                 "-m" | "--mode" =>
                 {
-                    let value = args.next().ok_or("-m must have a value".to_string())?;
+                    let value = args.next().ok_or_else(|| "-m must have a value".to_string())?;
                     mode = Some(match value.to_lowercase().as_str()
                     {
                         "text" => Ok(BuggifyMode::Text),
@@ -178,20 +178,20 @@ impl Config
                 },
                 "-s" | "--strength" =>
                 {
-                    let value = args.next().ok_or("-s must have a value".to_string())?;
+                    let value = args.next().ok_or_else(|| "-s must have a value".to_string())?;
                     strength = Some(value.parse().map_err(|err| format!("{err} ({value})"))?);
                 },
                 "-w" | "--wave" =>
                 {
-                    let value = args.next().ok_or("-w must have a value".to_string())?;
+                    let value = args.next().ok_or_else(|| "-w must have a value".to_string())?;
                     wave = Some(value.parse().map_err(|err| format!("{err} ({value})"))?);
                 },
-                x => return Err(format!("{x}"))
+                x => return Err(x.to_string())
             }
         }
 
-        let mode = mode.ok_or("-m option is mandatory".to_string())?;
-        let strength = strength.ok_or("-s option is mandatory".to_string())?;
+        let mode = mode.ok_or_else(|| "-m option is mandatory".to_string())?;
+        let strength = strength.ok_or_else(|| "-s option is mandatory".to_string())?;
 
         let input = input.ok_or("argument for input not found")?;
 

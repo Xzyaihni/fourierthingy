@@ -56,10 +56,10 @@ fn fft<const INVERSE: bool>(data: &[(f64, f64)]) -> Vec<(f64, f64)>
     let a = x.cos();
     let b = x.sin();
 
-    let even_half = fft::<INVERSE>(&data.iter().cloned().step_by(2)
+    let even_half = fft::<INVERSE>(&data.iter().copied().step_by(2)
         .collect::<Vec<(f64, f64)>>());
 
-    let odd_half = fft::<INVERSE>(&data.iter().cloned().skip(1).step_by(2)
+    let odd_half = fft::<INVERSE>(&data.iter().copied().skip(1).step_by(2)
         .collect::<Vec<(f64, f64)>>());
 
 
