@@ -56,6 +56,9 @@ fn fft<const INVERSE: bool>(data: &[(f64, f64)]) -> Vec<(f64, f64)>
     let a = x.cos();
     let b = x.sin();
 
+    let r = (a*a + b*b).sqrt();
+    let angle = (b/a).atan();
+
     let even_half = fft::<INVERSE>(&data.iter().copied().step_by(2)
         .collect::<Vec<(f64, f64)>>());
 
@@ -66,20 +69,20 @@ fn fft<const INVERSE: bool>(data: &[(f64, f64)]) -> Vec<(f64, f64)>
     let mut out = vec![(0.0, 0.0);len];
     for i in 0..len/2
     {
-        let r = (a*a + b*b).sqrt().powi(i as i32);
-        let angle = i as f64 * (b/a).atan();
+        let r = r.powi(i as i32);
+        let angle = i as f64 * angle;
 
         let pow_real = r * angle.cos();
         let pow_imaginary = r * angle.sin();
 
-        let odd_real = pow_real*odd_half[i].0 - pow_imaginary*odd_half[i].1;
-        let odd_imaginary = pow_real*odd_half[i].1 + pow_imaginary*odd_half[i].0;
+        let o = odd_half[i];
+        let e = even_half[i];
 
-        out[i].0 = even_half[i].0 + odd_real;
-        out[i].1 = even_half[i].1 + odd_imaginary;
+        let odd_real = pow_real*o.0 - pow_imaginary*o.1;
+        let odd_imaginary = pow_real*o.1 + pow_imaginary*o.0;
 
-        out[i+len/2].0 = even_half[i].0 - odd_real;
-        out[i+len/2].1 = even_half[i].1 - odd_imaginary;
+        out[i] = (e.0 + odd_real, e.1 + odd_imaginary);
+        out[i+len/2] = (e.0 - odd_real, e.1 - odd_imaginary);
     }
 
     out
